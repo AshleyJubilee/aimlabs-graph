@@ -53,7 +53,7 @@ def sqScore(*args):
         score = hits * math.sqrt((hits/shots)*100)
         i = 0
 
-    tableHits = [x for x in range(int((target//10)), int((target//10) + 15))]
+    tableHits = [x for x in range(int((target//10)), int((target//10) + 16))]
     tableShots = [math.ceil(x**(3/2) / (target//10)**(1/2)) for x in tableHits]
 
     tableShotsStr.set("\n".join(str(x)  for x  in tableShots))
