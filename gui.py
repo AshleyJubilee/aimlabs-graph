@@ -10,14 +10,29 @@ mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 
+def clearText():
+    convertedText.set(f'')
+    newHitsText.set(f'')   
+    fewerMissesText.set(f'')
+    tableShotsStr.set(f'')
+    tableHitsStr.set(f'')
+    return
+
 def sqScore(*args):
     try: 
         hits = float(hitsText.get())
         shots = float(shotsText.get())
         target = float(targetText.get())
     except: 
-        scoreText.set('Entry Error')
+        scoreText.set('Error')
+        clearText()
         return
+    
+    if shots < hits:
+        scoreText.set('Error')
+        clearText()
+        return
+
     score = round(hits * math.sqrt((hits/shots)*100))
     scoreText.set(f'{score}')
     misses = shots - hits
@@ -43,8 +58,12 @@ def sqScore(*args):
 
     # Shots -1
     while target > score: 
+        if hits * 10 < target:
+            fewerMissesText.set(f'N/A')
+            break
         i += 1
-        score = (hits) * math.sqrt((hits/(shots - i))*100)
+        print(score, hits, shots, i)
+        score = hits * math.sqrt((hits/(shots - i))*100)
         if (shots - i) < hits:
             score = hits * math.sqrt((hits/shots)*100)
             fewerMissesText.set(f'N/A')
@@ -53,7 +72,7 @@ def sqScore(*args):
         score = hits * math.sqrt((hits/shots)*100)
         i = 0
 
-    tableHits = [x for x in range(int((target//10)), int((target//10) + 16))]
+    tableHits = [x for x in range(int((target//10)), int((target//10) + 15))]
     tableShots = [math.ceil(x**(3/2) / (target//10)**(1/2)) for x in tableHits]
 
     tableShotsStr.set("\n".join(str(x)  for x  in tableShots))
@@ -70,24 +89,24 @@ newHitsText = StringVar()
 fewerMissesText = StringVar()
 
 
-ttk.Label(mainframe, text="Target").grid(column=1, row=2, sticky=(W, E))
-ttk.Label(mainframe, text="Hits").grid(column=1, row=3, sticky=(W, E))
-ttk.Label(mainframe, text="Shots").grid(column=1, row=4, sticky=(W, E))
-ttk.Label(mainframe, text="Score:").grid(column=1, row=5, sticky=(W, E))
-ttk.Label(mainframe, text="Converted Hits:").grid(column=1, row=6, sticky=(W, E))
-ttk.Label(mainframe, text="New Hits:").grid(column=1, row=7, sticky=(W, E))
-ttk.Label(mainframe, text="Fewer Misses:").grid(column=1, row=8, sticky=(W, E))
+ttk.Label(mainframe, text="Target").grid(column=1, row=1, sticky=(W, E))
+ttk.Label(mainframe, text="Hits").grid(column=1, row=2, sticky=(W, E))
+ttk.Label(mainframe, text="Shots").grid(column=1, row=3, sticky=(W, E))
+ttk.Label(mainframe, text="Score:").grid(column=1, row=4, sticky=(W, E))
+ttk.Label(mainframe, text="Converted Hits:").grid(column=1, row=5, sticky=(W, E))
+ttk.Label(mainframe, text="New Hits:").grid(column=1, row=6, sticky=(W, E))
+ttk.Label(mainframe, text="Fewer Misses:").grid(column=1, row=7, sticky=(W, E))
 
-targetEntry = ttk.Entry(mainframe, width=7, textvariable=targetText).grid(column=2, row=2, sticky=W)
-hitsEntry = ttk.Entry(mainframe, width=7, textvariable=hitsText).grid(column=2, row=3, sticky=W)
-shotsEntry = ttk.Entry(mainframe, width=7, textvariable=shotsText).grid(column=2, row=4, sticky=W)
+targetEntry = ttk.Entry(mainframe, width=7, textvariable=targetText).grid(column=2, row=1, sticky=W)
+hitsEntry = ttk.Entry(mainframe, width=7, textvariable=hitsText).grid(column=2, row=2, sticky=W)
+shotsEntry = ttk.Entry(mainframe, width=7, textvariable=shotsText).grid(column=2, row=3, sticky=W)
 
-scoreDisplay = ttk.Label(mainframe, textvariable=scoreText).grid(column=2, row=5, sticky=W)
-convertedDisplay = ttk.Label(mainframe, textvariable=convertedText).grid(column=2, row=6, sticky=W)
-newHitsDisplay = ttk.Label(mainframe, textvariable=newHitsText).grid(column=2, row=7, sticky=W)
-fewerMissesDisplay = ttk.Label(mainframe, textvariable=fewerMissesText).grid(column=2, row=8, sticky=W)
+scoreDisplay = ttk.Label(mainframe, textvariable=scoreText).grid(column=2, row=4, sticky=W)
+convertedDisplay = ttk.Label(mainframe, textvariable=convertedText).grid(column=2, row=5, sticky=W)
+newHitsDisplay = ttk.Label(mainframe, textvariable=newHitsText).grid(column=2, row=6, sticky=W)
+fewerMissesDisplay = ttk.Label(mainframe, textvariable=fewerMissesText).grid(column=2, row=7, sticky=W)
 
-ttk.Button(mainframe, text="Calculate", command=sqScore).grid(column=1, row=1, sticky=W)
+ttk.Button(mainframe, text="Calculate", command=sqScore).grid(column=1, row=8, sticky=W)
 
 ttk.Label(mainframe, text="Hits").grid(column=3, row=1, sticky=(W), padx=10)
 ttk.Label(mainframe, text="Shots").grid(column=4, row=1, sticky=(W), padx=10)
