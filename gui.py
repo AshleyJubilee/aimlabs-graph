@@ -16,6 +16,7 @@ def clearText():
     fewerMissesText.set(f'')
     tableShotsStr.set(f'')
     tableHitsStr.set(f'')
+    tableAccStr.set(f'')
     return
 
 def sqScore(*args):
@@ -62,7 +63,6 @@ def sqScore(*args):
             fewerMissesText.set(f'N/A')
             break
         i += 1
-        print(score, hits, shots, i)
         score = hits * math.sqrt((hits/(shots - i))*100)
         if (shots - i) < hits:
             score = hits * math.sqrt((hits/shots)*100)
@@ -74,9 +74,11 @@ def sqScore(*args):
 
     tableHits = [x for x in range(int((target//10)), int((target//10) + 15))]
     tableShots = [math.ceil(x**(3/2) / (target//10)**(1/2)) for x in tableHits]
+    tableAcc = [f'{round(((x/y)*100), 1)}%' for x, y in zip(tableHits, tableShots)]
 
-    tableShotsStr.set("\n".join(str(x)  for x  in tableShots))
-    tableHitsStr.set("\n".join(str(x)  for x  in tableHits))
+    tableShotsStr.set("\n".join(str(x) for x in tableShots))
+    tableHitsStr.set("\n".join(str(x) for x in tableHits))
+    tableAccStr.set("\n".join(str(x) for x in tableAcc))
  
 
 hitsText = StringVar()
@@ -110,23 +112,36 @@ ttk.Button(mainframe, text="Calculate", command=sqScore).grid(column=1, row=8, s
 
 ttk.Label(mainframe, text="Hits").grid(column=3, row=1, sticky=(W), padx=10)
 ttk.Label(mainframe, text="Shots").grid(column=4, row=1, sticky=(W), padx=10)
+ttk.Label(mainframe, text="Acc. %").grid(column=5, row=1, sticky=(W), padx=10)
 
-canvas = Canvas(mainframe, width=50, height=250)
-canvas2 = Canvas(mainframe, width=50, height=250)
+canvas = Canvas(mainframe, width=50, height=250, bg='#33393b', highlightthickness=0)
+canvas2 = Canvas(mainframe, width=50, height=250, bg='#33393b', highlightthickness=0)
+canvas3 = Canvas(mainframe, width=50, height=250, bg='#33393b', highlightthickness=0)
 
 tableHitsStr = StringVar()
 tableShotsStr = StringVar()
+tableAccStr = StringVar()
 hitsDisplay = ttk.Label(canvas, textvariable=tableHitsStr)
 shotsDisplay = ttk.Label(canvas2, textvariable=tableShotsStr)
+accDisplay = ttk.Label(canvas3, textvariable=tableAccStr)
 
 canvas.grid(column=3, row=2, rowspan=10, sticky=W)
 canvas2.grid(column=4, row=2, rowspan=10, sticky=W)
+canvas3.grid(column=5, row=2, rowspan=10, sticky=W)
 
 canvas.create_window(0, 0, anchor='nw', window=hitsDisplay)
 canvas2.create_window(0, 0, anchor='nw', window=shotsDisplay)
+canvas3.create_window(0, 0, anchor='nw', window=accDisplay)
 
 for child in mainframe.winfo_children(): 
     child.grid_configure(padx=5, pady=5)
 root.bind("<Return>", sqScore)
+root.resizable(False, False)
+
+root.tk.call('lappend', 'auto_path', 'awthemes-10.4.0')
+root.tk.call('package', 'require', 'awdark')
+
+s = ttk.Style()
+s.theme_use('awdark')
 
 root.mainloop()
