@@ -3,10 +3,9 @@ import json
 from pprint import pprint
 
 
-
 username = 'ashjubilee'
-
 url = "https://api.aimlab.gg/graphql"
+
 
 graphql_query = """query GetProfile($username: String) {
         aimlabProfile(username: $username) {
@@ -30,5 +29,8 @@ headers = {
 }
 
 response = requests.post(url=url, headers=headers, data=json.dumps(data))
+
+
+
 
 pprint(response.json())
