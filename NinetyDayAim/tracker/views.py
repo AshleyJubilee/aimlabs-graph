@@ -1,27 +1,25 @@
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponse
+from django_htmx.http import HttpResponseClientRedirect
+from django.shortcuts import render
 from .forms import UsernameForm
+from .api import usernameQuery
+
+def userSearch(request): 
+    form = UsernameForm(request.POST)
+    if form.is_valid():
+        if usernameQuery(form.cleaned_data['userName']) == None:
+            return HttpResponse(f'<p>Could not find AimLabs account: {form.cleaned_data['userName']}</p>')
+        else:
+            return HttpResponseClientRedirect(form.cleaned_data['userName'])
 
 
 def index(request):
-    # Username Search
-    if request.method == "POST":
-        form = UsernameForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect(form.cleaned_data['userName'])
-    else:
-        form = UsernameForm()
 
-    return render(request, 'home.html', {"form": form})
+    context = {"form": UsernameForm()}
+    return render(request, 'home.html', context)
 
 def userpage(request, username):
-    # Username Search
-    if request.method == "POST":
-        form = UsernameForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect(form.cleaned_data['userName'])
-    else:
-        form = UsernameForm()
-
-    return render(request, "user.html", {"user": username, "form": form})
+    
+    context = {"user": username, "form": UsernameForm()}
+    return render(request, "user.html", context)
 
