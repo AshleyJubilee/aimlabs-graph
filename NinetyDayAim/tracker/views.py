@@ -1,16 +1,27 @@
+from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
+from .forms import UsernameForm
 
-from .models import Username
 
-# Create your views here.
 def index(request):
-    return render(request, 'home.html',
-                  context={
-            "session": request.session.get("user"),
-        },)
+    # Username Search
+    if request.method == "POST":
+        form = UsernameForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(form.cleaned_data['userName'])
+    else:
+        form = UsernameForm()
+
+    return render(request, 'home.html', {"form": form})
 
 def userpage(request, username):
-    username = get_object_or_404(Username, username)
-    return render(request, "user.html", {
-        "username": username
-    })
+    # Username Search
+    if request.method == "POST":
+        form = UsernameForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(form.cleaned_data['userName'])
+    else:
+        form = UsernameForm()
+
+    return render(request, "user.html", {"user": username, "form": form})
+
