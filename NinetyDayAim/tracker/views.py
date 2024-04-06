@@ -1,6 +1,6 @@
 from django.http import HttpResponseRedirect, HttpResponse
 from django_htmx.http import HttpResponseClientRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import UsernameForm
 from .api import usernameQuery
 
